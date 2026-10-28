@@ -1,0 +1,78 @@
+VAPT DEVICE INFORMATION ASSESSMENT — COMMAND CHEAT SHEET
+
+HOW TO USE
+
+Copy and run one command at a time. - Commands under CMD work in Windows
+Command Prompt. - Commands under POWERSHELL work in PowerShell. - Run
+scans only on your own computer or systems you are explicitly authorized
+to assess. - Nmap must be installed for the Nmap commands.
+
+1. BASIC DEVICE INFORMATION (CMD)
+
+hostname ipconfig systeminfo
+
+2. CHECK WHETHER NMAP IS INSTALLED (CMD)
+
+nmap –version where nmap
+
+3. SCAN YOUR OWN COMPUTER WITH NMAP (CMD)
+
+nmap 127.0.0.1 
+nmap -sV 127.0.0.1
+
+Scan all TCP ports on your own computer (takes longer): 
+nmap -p- 127.0.0.1
+
+Notes: - The default Nmap scan checks common TCP ports, not every
+port. - -sV attempts to identify services running on open ports. - -p-
+scans TCP ports 1–65535.
+
+4. VIEW LISTENING PORTS AND PROCESS IDs (CMD)
+
+netstat -ano | findstr LISTENING
+
+Check one port at a time: 
+netstat -ano | findstr “:135” 
+netstat -ano | findstr “:445” 
+netstat -ano | findstr “:5432”
+
+5. IDENTIFY A PROCESS FROM ITS PID (CMD)
+
+Replace 7920 with the PID you want to check: tasklist /FI “PID eq 7920”
+
+Show services associated with a PID: tasklist /svc /FI “PID eq 7920”
+
+6. CHECK A SPECIFIC LISTENING PORT (POWERSHELL)
+
+Get-NetTCPConnection -LocalPort 5432 -State Listen | Format-Table
+LocalAddress, LocalPort, State, OwningProcess
+
+To check a different port, replace 5432 with that port number.
+
+If you are currently in Command Prompt, open PowerShell first by typing:
+powershell
+
+Then paste the PowerShell command above.
+
+7. OPTIONAL: SAVE COMMAND OUTPUT TO TEXT FILE (CMD)
+
+hostname > VAPT_Report.txt ipconfig >> VAPT_Report.txt systeminfo >>
+VAPT_Report.txt nmap -sV 127.0.0.1 >> VAPT_Report.txt netstat -ano |
+findstr LISTENING >> VAPT_Report.txt
+
+The first > creates/overwrites the file. The >> lines append to it. The
+file is saved in the current command-line folder.
+
+QUICK INTERPRETATION
+
+135/tcp Windows RPC (commonly associated with svchost.exe) 445/tcp
+Windows SMB-related traffic 5432/tcp PostgreSQL (if PostgreSQL is
+installed and listening)
+
+An open port does not automatically mean a vulnerability. Record the
+result, confirm which application needs the port, and check whether
+access is restricted to the intended interfaces and networks.
+
+
+reference ( to make a different report format)
+nmap -sV 127.0.0.1 > "C:\Users\YourName\Desktop\VAPT_Report.txt"
